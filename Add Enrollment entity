@@ -1,0 +1,170 @@
+package services;
+
+import entities.Student;
+import enums.StudentStatus;
+
+public class StudentService {
+
+    private final Student[] students = new Student[100];
+    private int studentCount = 0;
+
+    public void addStudent(Student student) {
+        if (student == null) {
+            throw new IllegalArgumentException("Student cannot be null.");
+        }
+
+        if (studentCount >= students.length) {
+            throw new IllegalStateException("Student storage is full.");
+        }
+
+        students[studentCount++] = student;
+    }
+
+    public Student[] getAllStudents() {
+        Student[] result = new Student[studentCount];
+
+        for (int i = 0; i < studentCount; i++) {
+            result[i] = students[i];
+        }
+
+        return result;
+    }
+
+    public Student findById(String studentId) {
+        for (int i = 0; i < studentCount; i++) {
+            if (students[i].getStudentId().equalsIgnoreCase(studentId)) {
+                return students[i];
+            }
+        }
+
+        return null;
+    }
+
+    public Student[] searchByNameOrEmail(String query) {
+        if (query == null || query.isBlank()) {
+            throw new IllegalArgumentException("Search query cannot be empty.");
+        }
+
+        Student[] temporary = new Student[studentCount];
+        int resultCount = 0;
+
+        for (int i = 0; i < studentCount; i++) {
+            Student student = students[i];
+
+            boolean matchesName = student.getName()
+                    .toLowerCase()
+                    .contains(query.toLowerCase());
+
+            boolean matchesEmail = student.getEmail()
+                    .toLowerCase()
+                    .contains(query.toLowerCase());
+
+            if (matchesName || matchesEmail) {
+                temporary[resultCount++] = student;
+            }
+        }
+
+        Student[] result = new Student[resultCount];
+
+        for (int i = 0; i < resultCount; i++) {
+            result[i] = temporary[i];
+        }
+
+        return result;
+    }
+
+    public Student[] filterByStatus(StudentStatus status) {
+        Student[] temporary = new Student[studentCount];
+        int resultCount = 0;
+
+        for (int i = 0; i < studentCount; i++) {
+            if (students[i].getStatus() == status) {
+                temporary[resultCount++] = students[i];
+            }
+        }
+
+        Student[] result = new Student[resultCount];
+
+        for (int i = 0; i < resultCount; i++) {
+            result[i] = temporary[i];
+        }
+
+        return result;
+    }
+
+    public Student[] filterByYear(int yearOfStudy) {
+        Student[] temporary = new Student[studentCount];
+        int resultCount = 0;
+
+        for (int i = 0; i < studentCount; i++) {
+            if (students[i].getYearOfStudy() == yearOfStudy) {
+                temporary[resultCount++] = students[i];
+            }
+        }
+
+        Student[] result = new Student[resultCount];
+
+        for (int i = 0; i < resultCount; i++) {
+            result[i] = temporary[i];
+        }
+
+        return result;
+    }
+
+    public void updateStudent(
+            String studentId,
+            String name,
+            String email,
+            String phoneNumber,
+            int yearOfStudy,
+            StudentStatus status
+    ) {
+        Student student = findById(studentId);
+
+        if (student == null) {
+            throw new IllegalArgumentException("Student not found.");
+        }
+
+        student.setName(name);
+        student.setEmail(email);
+        student.setPhoneNumber(phoneNumber);
+        student.setYearOfStudy(yearOfStudy);
+        student.setStatus(status);
+    }
+
+    public boolean deleteStudent(String studentId) {
+        for (int i = 0; i < studentCount; i++) {
+            if (students[i].getStudentId().equalsIgnoreCase(studentId)) {
+
+                for (int j = i; j < studentCount - 1; j++) {
+                    students[j] = students[j + 1];
+                }
+
+                students[studentCount - 1] = null;
+                studentCount--;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void sortByNameBubbleSort() {
+        for (int i = 0; i < studentCount - 1; i++) {
+            for (int j = 0; j < studentCount - i - 1; j++) {
+                if (students[j].getName()
+                        .compareToIgnoreCase(students[j + 1].getName()) > 0) {
+
+                    Student temporary = students[j];
+                    students[j] = students[j + 1];
+                    students[j + 1] = temporary;
+                }
+            }
+        }
+    }
+
+    public int getStudentCount() {
+        return studentCount;
+    }
+}
