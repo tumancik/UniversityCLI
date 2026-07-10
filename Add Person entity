@@ -1,0 +1,89 @@
+package entities;
+
+import enums.StudentStatus;
+
+import java.util.Objects;
+
+public class Student extends Person {
+
+    private static int nextId = 1;
+
+    private final String studentId;
+    private int yearOfStudy;
+    private StudentStatus status;
+
+    public Student(String name,
+                   String email,
+                   String phoneNumber,
+                   int yearOfStudy,
+                   StudentStatus status) {
+
+        super(name, email, phoneNumber);
+
+        this.studentId = "STU-" + nextId++;
+        setYearOfStudy(yearOfStudy);
+        setStatus(status);
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public int getYearOfStudy() {
+        return yearOfStudy;
+    }
+
+    public void setYearOfStudy(int yearOfStudy) {
+        if (yearOfStudy < 1 || yearOfStudy > 6) {
+            throw new IllegalArgumentException(
+                    "Year of study must be between 1 and 6."
+            );
+        }
+
+        this.yearOfStudy = yearOfStudy;
+    }
+
+    public StudentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(StudentStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException(
+                    "Student status cannot be empty."
+            );
+        }
+
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentId='" + studentId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", yearOfStudy=" + yearOfStudy +
+                ", status=" + status +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof Student student)) {
+            return false;
+        }
+
+        return Objects.equals(studentId, student.studentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentId);
+    }
+}
